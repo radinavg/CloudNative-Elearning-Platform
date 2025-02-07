@@ -1,0 +1,13 @@
+services:
+    localstack:
+        image: localstack/localstack-pro:latest
+        container_name: localstack
+        ports:
+            - '4566:4566'
+            - '4510-4559:4510-4559'
+        environment:
+            - LOCALSTACK_API_KEY=${LOCALSTACK_API_KEY}
+            - SERVICES=s3,dynamodb,lambda,ssm,cloudformation,iam,ecr,apigateway,cognito-idp,sns,sqs
+        volumes:
+            - '${TMPDIR:-/tmp}/localstack:/var/lib/localstack'
+            - '/var/run/docker.sock:/var/run/docker.sock'

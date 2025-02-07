@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+  localstack:
+    image: localstack/localstack-pro:latest
+    container_name: localstack
+    ports:
+      - '4566:4566'
+      - '4510-4559:4510-4559'
+    environment:
+      - LOCALSTACK_API_KEY=${LOCALSTACK_API_KEY}
+      - SERVICES=s3,dynamodb,lambda,ssm,cloudformation,iam,ecr,apigateway,cognito-idp,sns,sqs
+      - AWS_ACCESS_KEY_ID=test
+      - AWS_SECRET_ACCESS_KEY=test
+      - AWS_DEFAULT_REGION=eu-central-1
+    volumes:
+      - './localstack_data:/var/lib/localstack'
+      - '/var/run/docker.sock:/var/run/docker.sock'
+      - './aws-cdk:/workspace'
+      - './aws-cdk/start.sh:/etc/localstack/init/ready.d/start-localstack.sh'
+    working_dir: /workspace
+
+  webclient:
+    image: node:20
+    container_name: webclient
+    ports:
+      - "5173:5173"
+    volumes:
+      - "./webclient:/app"
+    working_dir: /app
+    command: sh -c "npm install && npm run dev"
